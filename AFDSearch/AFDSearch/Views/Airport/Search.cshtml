@@ -1,0 +1,49 @@
+﻿@using AFDSearch.Models
+@model AirportSearch
+@{
+    ViewBag.Title = "Airport Search";
+}
+
+@using (Html.BeginForm("Search", "Airport", FormMethod.Post))
+{
+    @Html.TextBoxFor(m => m.SearchText)
+
+    <input type="submit" value="Search" />
+}
+
+<style>
+    table, th, td {
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    table {
+        border-spacing: 15px;
+    }
+</style>
+
+<table>
+    <tr>
+        <th>Identifier</th>
+        <th>Name</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Chart</th>
+        <th>Region</th>
+        <th>Airport Facilities Directory</th>
+    </tr>
+    @foreach (Airport airport in Model.AirportSearchResults)
+    {
+        <tr>
+            <td>@airport.Identifier</td>
+            <td>@airport.Name</td>
+            <td>@airport.City</td>
+            <td>@airport.State</td>
+            <td>@airport.Chart</td>
+            <td>@airport.Region</td>
+            <td><a href="@airport.AfdLink">@airport.AfdLink</a></td>
+        </tr>
+    }
+
+</table>
+

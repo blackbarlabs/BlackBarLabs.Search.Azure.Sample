@@ -2,7 +2,7 @@
 {
     public class Airport
     {
-        public string Id { get; set;  }
+        public string Id { get; set; }
         public string Identifier { get; set; }
         public string City { get; set; }
         public string State { get; set; }

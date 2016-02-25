@@ -11,6 +11,7 @@ using AFDSearch.Models;
 
 namespace AFDSearch.Test
 {
+    [Ignore]   // You will want to remove this to run the test!!!  This is here to prevent accidentally running the indexer again.
     [TestClass]
     public class DataImportTest
     {
