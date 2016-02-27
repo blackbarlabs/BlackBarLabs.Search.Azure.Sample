@@ -3,47 +3,70 @@
 @{
     ViewBag.Title = "Airport Search";
 }
-
-@using (Html.BeginForm("Search", "Airport", FormMethod.Post))
-{
-    @Html.TextBoxFor(m => m.SearchText)
-
-    <input type="submit" value="Search" />
-}
-
 <style>
-    table, th, td {
-        border: 1px solid black;
-        padding: 5px;
+    p {
+        font-size: 12px; 
     }
-
-    table {
-        border-spacing: 15px;
+    ul, li{
+        margin-top: -10px;
     }
 </style>
 
 <table>
     <tr>
-        <th>Identifier</th>
-        <th>Name</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Chart</th>
-        <th>Region</th>
-        <th>Airport Facilities Directory</th>
-    </tr>
-    @foreach (Airport airport in Model.AirportSearchResults)
-    {
-        <tr>
-            <td>@airport.Identifier</td>
-            <td>@airport.Name</td>
-            <td>@airport.City</td>
-            <td>@airport.State</td>
-            <td>@airport.Chart</td>
-            <td>@airport.Region</td>
-            <td><a href="@airport.AfdLink">@airport.AfdLink</a></td>
-        </tr>
-    }
+        <td valign="top">
+            @using (Html.BeginForm("Search", "Airport", FormMethod.Post))
+            {
+                <input type="submit" value="Clear" />
+            }
 
+            @foreach (FacetInfo facetInfo in Model.FacetResults)
+            {
+                <p>@facetInfo.FacetName</p>
+                <ul>
+                    @foreach (var facet in facetInfo.Facets)
+                    {
+                        var facetText = @facet.Key + "(" + facet.Value + ")";
+                        var filter = string.IsNullOrEmpty(@Model.Filter) ? string.Empty : @Model.Filter + " and ";
+                        <p style="margin: 0">@Html.ActionLink(facetText, "Search", new AirportSearch() {Filter = filter + @facetInfo.FacetName + " eq '" + @facet.Key + "'"})</p>
+                    }
+                </ul>
+            }
+        </td>
+
+        <td valign="top">
+
+            @using (Html.BeginForm("Search", "Airport", FormMethod.Post))
+            {
+                @Html.TextBoxFor(m => m.SearchText)
+
+                <input type="submit" value="Search"/>
+            }
+
+            <table>
+                <tr>
+                    <th style="border: 1px solid black; padding: 5px;">Identifier</th>
+                    <th style="border: 1px solid black; padding: 5px;">Name</th>
+                    <th style="border: 1px solid black; padding: 5px;">City</th>
+                    <th style="border: 1px solid black; padding: 5px;">State</th>
+                    <th style="border: 1px solid black; padding: 5px;">Chart</th>
+                    <th style="border: 1px solid black; padding: 5px;">Region</th>
+                    <th style="border: 1px solid black; padding: 5px;">Airport Facilities Directory</th>
+                </tr>
+                @foreach (Airport airport in Model.AirportSearchResults)
+                {
+                    <tr>
+                        <td style="border: 1px solid black; padding: 5px;">@airport.Identifier</td>
+                        <td style="border: 1px solid black; padding: 5px;">@airport.Name</td>
+                        <td style="border: 1px solid black; padding: 5px;">@airport.City</td>
+                        <td style="border: 1px solid black; padding: 5px;">@airport.State</td>
+                        <td style="border: 1px solid black; padding: 5px;">@airport.Chart</td>
+                        <td style="border: 1px solid black; padding: 5px;">@airport.Region</td>
+                        <td style="border: 1px solid black; padding: 5px;"><a href="@airport.AfdLink">@airport.AfdLink</a></td>
+                    </tr>
+                }
+            </table>
+        </td>
+    </tr>
 </table>
 

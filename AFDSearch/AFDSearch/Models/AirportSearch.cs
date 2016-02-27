@@ -11,6 +11,12 @@ namespace AFDSearch.Models
 
         public string SearchText { get; set; }
 
+        public string Filter { get; set; }
+
+        public int Top { get; set; }
+
         public List<Airport> AirportSearchResults { get; set; }
+
+        public List<FacetInfo> FacetResults { get; set; }
     }
 }
