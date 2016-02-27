@@ -26,7 +26,7 @@ namespace AFDSearch.Controllers
         public async Task<ActionResult> Search(AirportSearch model)
         {
             // By default, we want to get back no results, but we want to get facet and count information for the entire result set
-            int? top = DefaultTopCount;
+            int? top = model.Top == 0 ? DefaultTopCount : model.Top;
             var searchText = model.SearchText;
             if (string.IsNullOrEmpty(searchText) && string.IsNullOrEmpty(model.Filter))
             {
@@ -38,20 +38,25 @@ namespace AFDSearch.Controllers
             var facetfields = new List<string>() {"Region", "State", "Chart"};
             var facetResults = new List<FacetInfo>();
 
-            var result = await azureSearchEngine.SearchDocumentsAsync<Airport>(indexName, searchText, facetfields, true, top, null,
+            long count = 0;
+            var result = await azureSearchEngine.SearchDocumentsAsync<Airport>(indexName, searchText, facetfields, true, top, model.Skip,
                 model.Filter, 
                 airport => new Airport() {Id = airport.Id, Identifier = airport.Identifier, Name = airport.Name, City = airport.City, State = airport.State, Chart = airport.Chart, Region = airport.Region, AfdLink = airport.AfdLink},
                 (facetName, facets) =>
                 {
                     facetResults.Add(new FacetInfo() {FacetName = facetName, Facets = facets});
-                }, 
-                count => { });
+                },
+                documentCount => { if (null != documentCount) count = documentCount.Value; });
 
             var resultsModel = new AirportSearch();
             resultsModel.SearchText = model.SearchText;
             resultsModel.AirportSearchResults = result.ToList();
             resultsModel.FacetResults = facetResults;
             resultsModel.Filter = model.Filter;
+            resultsModel.Top = model.Top;
+            resultsModel.Skip = model.Skip;
+            resultsModel.Count = count;
+
 
             return View(resultsModel);
         }

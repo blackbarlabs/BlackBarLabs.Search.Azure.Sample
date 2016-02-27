@@ -15,6 +15,10 @@ namespace AFDSearch.Models
 
         public int Top { get; set; }
 
+        public int Skip { get; set; }
+
+        public long Count { get; set; }
+
         public List<Airport> AirportSearchResults { get; set; }
 
         public List<FacetInfo> FacetResults { get; set; }

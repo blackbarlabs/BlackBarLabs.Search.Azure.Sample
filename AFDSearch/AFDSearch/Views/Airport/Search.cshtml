@@ -3,6 +3,10 @@
 @{
     ViewBag.Title = "Airport Search";
 }
+@{
+    const int pageSize = 10;
+    int currentPage = 0;
+}
 <style>
     p {
         font-size: 12px; 
@@ -28,7 +32,7 @@
                     {
                         var facetText = @facet.Key + "(" + facet.Value + ")";
                         var filter = string.IsNullOrEmpty(@Model.Filter) ? string.Empty : @Model.Filter + " and ";
-                        <p style="margin: 0">@Html.ActionLink(facetText, "Search", new AirportSearch() {Filter = filter + @facetInfo.FacetName + " eq '" + @facet.Key + "'"})</p>
+                        <p style="margin: 0">@Html.ActionLink(facetText, "Search", new AirportSearch() {Top = pageSize, Skip = currentPage * pageSize, Filter = filter + @facetInfo.FacetName + " eq '" + @facet.Key + "'"})</p>
                     }
                 </ul>
             }
@@ -66,6 +70,38 @@
                     </tr>
                 }
             </table>
+
+            @{
+                var pageInfo = string.Empty;
+                if (Model.AirportSearchResults.Count > 0)
+                {
+                    var first = @Model.Skip + 1;
+                    var last = @Model.Skip + pageSize;
+                    pageInfo = first + " - " + last + " of " + @Model.Count;
+                }
+
+                int prevSkip = @Model.Skip - pageSize;
+                int nextSkip = @Model.Skip + pageSize;
+            }
+            @{
+                if (prevSkip < 0)
+                {
+                    prevSkip = 0;
+                }
+                if (nextSkip > (int)Model.Count)
+                {
+                    nextSkip = @Model.Skip;
+                }
+            }
+
+            @if (Model.AirportSearchResults.Count > 0)
+            {
+                <p style="margin: 0">
+                    @Html.ActionLink("Previous", "Search", new AirportSearch() {Top = pageSize, Skip = prevSkip, Filter = @Model.Filter})
+                    @pageInfo
+                    @Html.ActionLink("Next", "Search", new AirportSearch() {Top = pageSize, Skip = nextSkip, Filter = @Model.Filter})
+                </p>
+            }
         </td>
     </tr>
 </table>
